@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,12 +11,14 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform player;
     [SerializeField] private LayerMask groundLayer, playerLayer;
+    [SerializeField] private Animator animator;
+    private float runSpeed;
+    [SerializeField] private float runSpeedMultiplier;
 
     // Patrolling
-    private Vector3 walkPoint;
-    private bool walkPointSet;
-    [SerializeField] private float walkPointRange;
-
+    [SerializeField] private Transform[] points;
+    private int currentPoint;
+    
     // Attacking
     [SerializeField] private float timeBetweenAttacks;
     bool alreadyAttacked;
@@ -27,6 +31,8 @@ public class EnemyAI : MonoBehaviour
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        currentPoint = 0;
+        runSpeed = agent.speed * runSpeedMultiplier;
     }
 
     private void Update()
@@ -41,55 +47,59 @@ public class EnemyAI : MonoBehaviour
 
     private void Patrolling()
     {
-        Debug.Log("Patrolling");
-        if (!walkPointSet) SearchWalkPoint();
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
+        animator.SetBool("isWalking", true);
+        if (agent.transform.position.x != points[currentPoint].position.x && agent.transform.position.y != points[currentPoint].position.y)
+        {
 
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
+            agent.SetDestination(points[currentPoint].transform.position);
+        }
 
-        // Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1f)
-            walkPointSet = false;
+       else
+        {
+
+            if (currentPoint < points.Count()-1)
+            {
+                currentPoint++;
+
+            }
+            else
+            {
+                currentPoint = 0;
+            }
+        }
      
     }
 
-    private void SearchWalkPoint()
-    {
-        // Calculate random point in range
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, groundLayer))
-            walkPointSet = true;
-    }
-
     private void ChasePlayer()
-    {
-        Debug.Log("Chasing");
+    {        
+        animator.SetBool("isWalking", false);
         agent.SetDestination(player.position);
+        agent.speed = runSpeed;
+        animator.SetBool("isRunning", true);
+
     }
 
     private void AttackPlayer()
     {
+        animator.SetBool("isRunning", false);
         Debug.Log("Attacking");
         // Make sure enemy doesn't move while attacking
         agent.SetDestination(transform.position);
         transform.LookAt(player);
 
         if (!alreadyAttacked)
-        {        
-            
-        /* Attack code here
-        *
-        *
-        *
-        */
+        {
+            animator.SetBool("isPunching", true);
+            /* Attack code here
+            *
+            *
+            *
+            */
             alreadyAttacked = true;
+
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
+        animator.SetBool("isIdle", true);
     }
 
     private void ResetAttack()
