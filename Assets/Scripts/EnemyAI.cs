@@ -10,7 +10,8 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform player;
-    [SerializeField] private LayerMask groundLayer, playerLayer;
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Animator animator;
     private float runSpeed;
     [SerializeField] private float runSpeedMultiplier;
@@ -71,40 +72,46 @@ public class EnemyAI : MonoBehaviour
     }
 
     private void ChasePlayer()
-    {        
+    {
+        Debug.Log("Chasing");
+        animator.SetBool("isIdle", false);
         animator.SetBool("isWalking", false);
+        animator.SetBool("isRunning", true);
         agent.SetDestination(player.position);
         agent.speed = runSpeed;
-        animator.SetBool("isRunning", true);
+
 
     }
 
     private void AttackPlayer()
     {
         animator.SetBool("isRunning", false);
-        Debug.Log("Attacking");
+        
+        Debug.Log("Attacking"); 
         // Make sure enemy doesn't move while attacking
-        agent.SetDestination(transform.position);
+
+        agent.SetDestination(agent.transform.position);
         transform.LookAt(player);
 
         if (!alreadyAttacked)
         {
-            animator.SetBool("isPunching", true);
-            /* Attack code here
-            *
-            *
-            *
-            */
+            animator.SetTrigger("Punch");
+            Invoke("DealDamage", 0.37f);
             alreadyAttacked = true;
-
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            Invoke("ResetAttack", timeBetweenAttacks);
         }
         animator.SetBool("isIdle", true);
+    }
+
+    private void DealDamage()
+    {
+        playerHealth.TakeDamage(20);
     }
 
     private void ResetAttack()
     {
         alreadyAttacked = false;
+        Debug.Log("Hej");
     }
 
     private void OnDrawGizmosSelected()
