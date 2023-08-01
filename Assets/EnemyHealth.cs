@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -8,6 +9,11 @@ public class EnemyHealth : MonoBehaviour
     private int health;
 
     [SerializeField] private HealthBar healthBar;
+
+    [SerializeField] private Animator anim;
+
+    // Destroy upon death
+    [SerializeField] private GameObject enemy;
 
     private void Start()
     {
@@ -20,9 +26,16 @@ public class EnemyHealth : MonoBehaviour
         health -= damage;
         healthBar.SetHealth(health);
 
-        if (health <= 0)
-        {
+        if (health <= 0) Death();
+    }
 
-        }
+    private void Death()
+    {
+        Destroy(GetComponent<EnemyAI>());
+        GetComponent<NavMeshAgent>().isStopped = true;
+
+        anim.SetTrigger("Die");
+        
+        Destroy(enemy, 6);
     }
 }

@@ -796,7 +796,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 4.5
-  m_Acceleration: 8
+  m_Acceleration: 60
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -826,14 +826,14 @@ MonoBehaviour:
     m_Bits: 128
   playerHealth: {fileID: 1401055429}
   animator: {fileID: 817843162}
-  runSpeedMultiplier: 2.5
+  runSpeedMultiplier: 2
   points:
   - {fileID: 12809630}
   - {fileID: 957972325}
   - {fileID: 1855967348}
   timeBetweenAttacks: 1.5
   sightRange: 27
-  attackRange: 7
+  attackRange: 4
 --- !u!136 &376577368
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -871,6 +871,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthBar: {fileID: 878924880}
+  anim: {fileID: 817843162}
+  enemy: {fileID: 376577360}
 --- !u!1 &478700793
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,7 +2023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4189fffe3b1032d479e9f62a4ec25b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 25
   timeBetweenShooting: 0.25
   spread: 0
   range: 100
@@ -2716,7 +2718,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2111445677105945693, guid: 1e153ad313eab94429d86311f05219e7, type: 3}
       propertyPath: moveSpeed
-      value: 6.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2202874881759467918, guid: 1e153ad313eab94429d86311f05219e7, type: 3}
       propertyPath: m_LocalPosition.x

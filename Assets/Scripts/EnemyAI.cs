@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform player;
+    private Rigidbody rb;
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Animator animator;
@@ -79,7 +80,6 @@ public class EnemyAI : MonoBehaviour
         animator.SetBool("isRunning", true);
         agent.SetDestination(player.position);
         agent.speed = runSpeed;
-
 
     }
 
