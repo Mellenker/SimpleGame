@@ -5,26 +5,31 @@ using UnityEngine;
 
 public class GunSystem : MonoBehaviour
 {
-    //Gun stats
+    // Gun stats
     [SerializeField] private int damage;
     [SerializeField] private float timeBetweenShooting, spread, range, reloadTime, timeBetweenShots;
     [SerializeField] private int magazineSize, bulletsPerTap;
     [SerializeField] private bool allowButtonHold;
     private int bulletsLeft, bulletsShot;
 
-    //Bools 
+    // Bools 
     bool shooting, readyToShoot, reloading;
 
-    //Reference
+    // Reference
     [SerializeField] private Camera fpsCam;
-    [SerializeField] private Transform attackPoint;
     [SerializeField] private RaycastHit rayHit;
     [SerializeField] private LayerMask enemyLayer;
 
-    //Graphics
-    [SerializeField] private GameObject muzzleFlash, bulletHoleGraphic;
+    // Graphics
     [SerializeField] private float camShakeMagnitude, camShakeDuration;
     [SerializeField] private TextMeshProUGUI text;
+
+    // Audio
+    [SerializeField] private AudioSource shootSound;
+    [SerializeField] private AudioSource reloadSound;
+
+
+
 
     private void Awake()
     {
@@ -56,6 +61,8 @@ public class GunSystem : MonoBehaviour
     {
         readyToShoot = false;
 
+        shootSound.Play();
+
         //Spread
         float x = Random.Range(-spread, spread);
         float y = Random.Range(-spread, spread);
@@ -74,11 +81,7 @@ public class GunSystem : MonoBehaviour
             }
 
         }
-
-        //Graphics
-        Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
-        Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
-
+            
         bulletsLeft--;
         bulletsShot--;
 
@@ -93,6 +96,7 @@ public class GunSystem : MonoBehaviour
     }
     private void Reload()
     {
+        reloadSound.Play();
         reloading = true;
         Invoke("ReloadFinished", reloadTime);
     }
@@ -101,4 +105,5 @@ public class GunSystem : MonoBehaviour
         bulletsLeft = magazineSize;
         reloading = false;
     }
+
 }

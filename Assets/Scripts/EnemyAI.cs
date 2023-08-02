@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -20,8 +21,9 @@ public class EnemyAI : MonoBehaviour
     // Patrolling
     [SerializeField] private Transform[] points;
     private int currentPoint;
-    
+
     // Attacking
+    [SerializeField] private int damageDealt;
     [SerializeField] private float timeBetweenAttacks;
     bool alreadyAttacked;
 
@@ -91,12 +93,13 @@ public class EnemyAI : MonoBehaviour
         // Make sure enemy doesn't move while attacking
 
         agent.SetDestination(agent.transform.position);
-        transform.LookAt(player);
+
+        Vector3 targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+        transform.LookAt(targetPosition);
 
         if (!alreadyAttacked)
         {
             animator.SetTrigger("Punch");
-            Invoke("DealDamage", 0.37f);
             alreadyAttacked = true;
             Invoke("ResetAttack", timeBetweenAttacks);
         }
@@ -105,7 +108,7 @@ public class EnemyAI : MonoBehaviour
 
     private void DealDamage()
     {
-        playerHealth.TakeDamage(20);
+        playerHealth.TakeDamage(damageDealt);
     }
 
     private void ResetAttack()
